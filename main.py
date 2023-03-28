@@ -2,6 +2,7 @@ from flask import Flask
 from transformers import AutoTokenizer, AutoModel
 import torch
 from sklearn.metrics.pairwise import cosine_similarity
+from happytransformer import HappyTextToText, TTSettings
 
 app = Flask(__name__)
 
@@ -18,6 +19,18 @@ example_sentence = "Dr. Cooper? Yes. This is about Mrs. Lakewood. I'm concerned 
 @app.route("/")
 def homepage():
     return "Hello World"
+
+
+@app.route("/")
+def grammer_correction():
+    happy_tt = HappyTextToText("T5", "vennify/t5-base-grammar-correction")
+    args = TTSettings(num_beams=5, min_length=1)
+
+    result = happy_tt.generate_text(
+        "grammar: This sentences has has bads grammar.", args=args)
+    print(result.text)
+
+    return result.text
 
 
 @app.route("/cosine")
